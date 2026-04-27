@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.pytest_cache/
+__pycache__/
+.venv/
+*.pyc
+*.pyo
+*.tsbuildinfo
+*.sqlite3
+*.db
+coverage/
+apps/frontend/coverage/
+apps/backend/htmlcov/
+apps/backend/.coverage
+data/
+.env

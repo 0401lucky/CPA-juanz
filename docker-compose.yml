@@ -1,0 +1,58 @@
+services:
+  gateway:
+    build:
+      context: ./infra/gateway
+      dockerfile: Dockerfile
+    container_name: cpa-donation-gateway
+    depends_on:
+      - frontend
+      - backend
+    environment:
+      PORT: 80
+      BACKEND_BASE_URL: http://backend:8000
+      FRONTEND_BASE_URL: http://frontend:80
+    ports:
+      - "${GATEWAY_PORT:-8080}:80"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile
+    container_name: cpa-donation-frontend
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile
+    container_name: cpa-donation-backend
+    environment:
+      DATABASE_PATH: "${DATABASE_PATH:-/app/data/donation-station.db}"
+      EXTERNAL_CPA_BASE_URL: "${EXTERNAL_CPA_BASE_URL}"
+      EXTERNAL_CPA_MANAGEMENT_KEY: "${EXTERNAL_CPA_MANAGEMENT_KEY}"
+      CPA_AUTH_FILE_PREFIX: "${CPA_AUTH_FILE_PREFIX:-donate-geminicli}"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
+      SESSION_SECRET: "${SESSION_SECRET}"
+      TURNSTILE_SITE_KEY: "${TURNSTILE_SITE_KEY:-}"
+      TURNSTILE_SECRET_KEY: "${TURNSTILE_SECRET_KEY:-}"
+      RATE_LIMIT_WINDOW_SECONDS: "${RATE_LIMIT_WINDOW_SECONDS:-60}"
+      RATE_LIMIT_MAX_REQUESTS: "${RATE_LIMIT_MAX_REQUESTS:-20}"
+    volumes:
+      - donation_data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')"
+        ]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  donation_data:

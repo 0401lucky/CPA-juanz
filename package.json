@@ -1,0 +1,15 @@
+{
+  "name": "cpa-juanjian",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "install:frontend": "npm --prefix apps/frontend install",
+    "test:frontend": "npm --prefix apps/frontend run test",
+    "build:frontend": "npm --prefix apps/frontend run build",
+    "lint:frontend": "npm --prefix apps/frontend run lint",
+    "test:backend": "uv run --project apps/backend pytest",
+    "test": "npm run test:backend && npm run test:frontend",
+    "check": "npm run test && npm run lint:frontend && npm run build:frontend",
+    "dev:backend": "uv run --project apps/backend uvicorn app.main:create_dev_app --factory --reload --host 0.0.0.0 --port 8000"
+  }
+}
