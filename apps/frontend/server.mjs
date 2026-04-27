@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(__dirname, "dist");
 const indexFile = path.join(distDir, "index.html");
+const port = Number(process.env.PORT ?? "80");
 
 const mimeTypes = {
   ".html": "text/html; charset=utf-8",
@@ -44,7 +45,6 @@ const server = http.createServer(async (request, response) => {
   response.end(await readFile(indexFile, "utf-8"));
 });
 
-server.listen(80, "0.0.0.0", () => {
-  console.log("frontend server listening on :80");
+server.listen(port, "0.0.0.0", () => {
+  console.log(`frontend server listening on :${port}`);
 });
-

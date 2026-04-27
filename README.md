@@ -85,6 +85,27 @@ docker compose up --build
 - 我的凭证：`/my`
 - 审核后台：`/admin`
 
+## Zeabur 部署
+
+Zeabur 官方目前 **不支持直接从 Docker Compose YAML 部署**，所以在 Zeabur 上要拆成 3 个 Git Service：
+
+- `backend`
+  - Root Directory: `apps/backend`
+- `frontend`
+  - Root Directory: `apps/frontend`
+- `gateway`
+  - Root Directory: `infra/gateway`
+
+推荐做法：
+
+1. 在 Zeabur 新建一个项目。
+2. 从同一个 GitHub 仓库 `0401lucky/CPA-juanz` 连续创建 3 个服务。
+3. 每个服务都选同一个仓库，但 Root Directory 分别填上面那 3 个目录。
+4. 只给 `gateway` 绑公网域名。
+5. `frontend` 和 `backend` 保持项目内网访问即可。
+
+`gateway` 需要把流量转给内网的 `frontend` / `backend`，所以它的环境变量要引用另外两个服务的内部地址。
+
 ## 重要说明
 
 - OAuth 捐献成功后，站点会先从外部 CPA 抓取刚生成的 Gemini 凭证，再从 CPA 临时删除，放入本站待审核池；只有管理员发布后才会重新写回 CPA。
