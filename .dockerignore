@@ -1,0 +1,17 @@
+.git
+.pytest_cache
+__pycache__
+*.pyc
+*.pyo
+.venv
+node_modules
+apps/frontend/node_modules
+apps/frontend/dist
+apps/backend/.venv
+apps/backend/__pycache__
+apps/backend/tests/__pycache__
+apps/backend/app/__pycache__
+apps/frontend/coverage
+apps/frontend/tsconfig.tsbuildinfo
+data
+

@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 
 class AppSettings(BaseModel):
     database_path: Path = Field(default=Path("data/donation-station.db"))
+    frontend_dist_path: Path = Field(default=Path("frontend-dist"))
     admin_password: str = Field(default="change-me-admin-password")
     session_secret: str = Field(default="change-me-session-secret")
     cpa_base_url: str = Field(default="https://demo-cpa.example.com")
@@ -27,6 +28,7 @@ class AppSettings(BaseModel):
 
         return cls(
             database_path=Path(os.getenv("DATABASE_PATH", "data/donation-station.db")),
+            frontend_dist_path=Path(os.getenv("FRONTEND_DIST_PATH", "frontend-dist")),
             admin_password=os.getenv("ADMIN_PASSWORD", "change-me-admin-password"),
             session_secret=os.getenv("SESSION_SECRET", "change-me-session-secret"),
             cpa_base_url=os.getenv("EXTERNAL_CPA_BASE_URL", "https://demo-cpa.example.com"),
@@ -37,4 +39,3 @@ class AppSettings(BaseModel):
             rate_limit_window_seconds=int(os.getenv("RATE_LIMIT_WINDOW_SECONDS", "60")),
             rate_limit_max_requests=int(os.getenv("RATE_LIMIT_MAX_REQUESTS", "20"))
         )
-

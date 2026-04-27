@@ -1,34 +1,14 @@
 services:
-  gateway:
+  app:
     build:
-      context: ./infra/gateway
+      context: .
       dockerfile: Dockerfile
-    container_name: cpa-donation-gateway
-    depends_on:
-      - frontend
-      - backend
-    environment:
-      PORT: 80
-      BACKEND_BASE_URL: http://backend:8000
-      FRONTEND_BASE_URL: http://frontend:80
+    container_name: cpa-donation-app
     ports:
-      - "${GATEWAY_PORT:-8080}:80"
-    restart: unless-stopped
-
-  frontend:
-    build:
-      context: ./apps/frontend
-      dockerfile: Dockerfile
-    container_name: cpa-donation-frontend
-    restart: unless-stopped
-
-  backend:
-    build:
-      context: ./apps/backend
-      dockerfile: Dockerfile
-    container_name: cpa-donation-backend
+      - "${APP_PORT:-8080}:8000"
     environment:
       DATABASE_PATH: "${DATABASE_PATH:-/app/data/donation-station.db}"
+      FRONTEND_DIST_PATH: "/app/frontend-dist"
       EXTERNAL_CPA_BASE_URL: "${EXTERNAL_CPA_BASE_URL}"
       EXTERNAL_CPA_MANAGEMENT_KEY: "${EXTERNAL_CPA_MANAGEMENT_KEY}"
       CPA_AUTH_FILE_PREFIX: "${CPA_AUTH_FILE_PREFIX:-donate-geminicli}"

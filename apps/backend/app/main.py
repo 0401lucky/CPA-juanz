@@ -9,6 +9,7 @@ import httpx
 from fastapi import FastAPI, File, HTTPException, Request, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
+from starlette.responses import FileResponse
 
 from app.config import AppSettings
 from app.cpa_client import CPAClient
@@ -423,6 +424,24 @@ def create_app(
             error_message=None
         )
         return {"credential": serialize_credential(updated)}
+
+    frontend_dist_path = resolved_settings.frontend_dist_path
+    frontend_index_path = frontend_dist_path / "index.html"
+
+    @app.get("/", include_in_schema=False)
+    def serve_frontend_index() -> Response:
+        if frontend_index_path.exists():
+            return FileResponse(frontend_index_path)
+        raise HTTPException(status_code=404, detail="前端静态资源不存在")
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    def serve_frontend_asset(full_path: str) -> Response:
+        target_path = frontend_dist_path / full_path
+        if target_path.exists() and target_path.is_file():
+            return FileResponse(target_path)
+        if frontend_index_path.exists():
+            return FileResponse(frontend_index_path)
+        raise HTTPException(status_code=404, detail="前端静态资源不存在")
 
     return app
 

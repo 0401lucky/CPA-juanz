@@ -84,8 +84,15 @@ class FakeCPAClient:
 
 @pytest.fixture()
 def settings(tmp_path: Path) -> AppSettings:
+    frontend_dist_path = tmp_path / "frontend-dist"
+    frontend_dist_path.mkdir(parents=True, exist_ok=True)
+    (frontend_dist_path / "index.html").write_text(
+        "<!doctype html><html><body><div id='root'>frontend ok</div></body></html>",
+        encoding="utf-8"
+    )
     return AppSettings(
         database_path=tmp_path / "donation-station.db",
+        frontend_dist_path=frontend_dist_path,
         admin_password="super-admin-password",
         session_secret="test-session-secret",
         cpa_base_url="https://demo-cpa.example.com",
@@ -120,4 +127,3 @@ def gemini_payload(email: str = "person@example.com", project_id: str = "proj-1"
             }
         }
     ).encode("utf-8")
-

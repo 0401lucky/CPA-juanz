@@ -18,8 +18,8 @@
 
 - `apps/backend`：FastAPI + SQLite 后端
 - `apps/frontend`：React + Vite 前端
-- `infra/Caddyfile`：单域名反向代理
-- `docker-compose.yml`：站点自身的一键部署编排
+- `Dockerfile`：单容器构建前后端，适合 Zeabur 直接部署
+- `docker-compose.yml`：单服务本地部署编排
 
 ## 外部 CPA 要求
 
@@ -87,24 +87,32 @@ docker compose up --build
 
 ## Zeabur 部署
 
-Zeabur 官方目前 **不支持直接从 Docker Compose YAML 部署**，所以在 Zeabur 上要拆成 3 个 Git Service：
+Zeabur 官方目前 **不支持直接从 Docker Compose YAML 部署**，但现在仓库根目录已经提供了 **单容器 `Dockerfile`**，所以在 Zeabur 上你只需要部署 **一个 Git Service**。
 
-- `backend`
-  - Root Directory: `apps/backend`
-- `frontend`
-  - Root Directory: `apps/frontend`
-- `gateway`
-  - Root Directory: `infra/gateway`
+部署方式：
 
-推荐做法：
+1. 新建一个 Git Service。
+2. 仓库选 `0401lucky/CPA-juanz`。
+3. Root Directory 保持 `/`。
+4. Zeabur 会直接使用根目录 `Dockerfile` 构建。
+5. 给这个服务绑定公网域名即可。
 
-1. 在 Zeabur 新建一个项目。
-2. 从同一个 GitHub 仓库 `0401lucky/CPA-juanz` 连续创建 3 个服务。
-3. 每个服务都选同一个仓库，但 Root Directory 分别填上面那 3 个目录。
-4. 只给 `gateway` 绑公网域名。
-5. `frontend` 和 `backend` 保持项目内网访问即可。
+需要填写的环境变量只有后端那一组：
 
-`gateway` 需要把流量转给内网的 `frontend` / `backend`，所以它的环境变量要引用另外两个服务的内部地址。
+- `EXTERNAL_CPA_BASE_URL`
+- `EXTERNAL_CPA_MANAGEMENT_KEY`
+- `CPA_AUTH_FILE_PREFIX`
+- `ADMIN_PASSWORD`
+- `SESSION_SECRET`
+- `DATABASE_PATH`
+- `TURNSTILE_SITE_KEY`
+- `TURNSTILE_SECRET_KEY`
+- `RATE_LIMIT_WINDOW_SECONDS`
+- `RATE_LIMIT_MAX_REQUESTS`
+
+另外要挂一个持久化卷到：
+
+- `/app/data`
 
 ## 重要说明
 
